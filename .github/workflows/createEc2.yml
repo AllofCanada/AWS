@@ -3,7 +3,8 @@ name: CreateEC2
 on: workflow_dispatch
 
 jobs:
-  ec2-infra:
+  terraform-plan:
+    name: Terraform Plan
     runs-on: [self-hosted, linux, x64]
     defaults:
       run:
@@ -19,5 +20,26 @@ jobs:
       - name: Terraform init
         run: terraform init
 
+      - name: Terraform plan
+        run: terraform plan
+    
+  terraform-apply:
+    name: Terraform Apply
+    needs: terraform-plan
+    runs-on: [self-hosted, linux, x64]
+    environment: production
+    defaults:
+      run:
+        working-directory: ./EC2
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3 # Fixed typo: 'steup' to 'setup'
+
+      - name: Terraform init
+        run: terraform init
+        
       - name: Terraform Apply
         run: terraform apply -auto-approve
