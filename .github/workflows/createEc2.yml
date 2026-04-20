@@ -9,20 +9,30 @@ jobs:
     defaults:
       run:
         working-directory: ./EC2
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3 # Fixed typo: 'steup' to 'setup'
+        uses: hashicorp/setup-terraform@v3
 
-      - name: Terraform init
+      - name: Terraform Init
         run: terraform init
 
-      - name: Terraform plan
-        run: terraform plan
-    
+      - name: Terraform Plan
+        id: plan
+        # This generates the plan and saves it to a file
+        run: terraform plan -no-color > plan_output.txt
+
+      - name: Post Plan to Summary
+        # This takes the text and puts it on the GitHub Actions summary page
+        run: |
+          echo "### Terraform Plan Output 🚀" >> $GITHUB_STEP_SUMMARY
+          echo '```terraform' >> $GITHUB_STEP_SUMMARY
+          cat plan_output.txt >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+          
   terraform-apply:
     name: Terraform Apply
     needs: terraform-plan
@@ -40,6 +50,6 @@ jobs:
 
       - name: Terraform init
         run: terraform init
-        
+
       - name: Terraform Apply
         run: terraform apply -auto-approve
