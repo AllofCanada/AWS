@@ -6,6 +6,13 @@ terraform {
       version = "~>6.0"
     }
   }
+  backend "s3" {
+    bucket = "farhan-tf1281"
+    key = "ec2/terraform.tfstate"
+    region = "ca-central-1"
+    use_lockfile = true
+  }
+  
 }
 
 provider "aws" {
