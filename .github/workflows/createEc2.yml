@@ -4,20 +4,20 @@ on: workflow_dispatch
 
 jobs:
   ec2-infra:
-  runs-on: [self-hosted, linux, x64]
-  defaults:
-    run:
-      working-directory: ./EC2
+    runs-on: [self-hosted, linux, x64]
+    defaults:
+      run:
+        working-directory: ./EC2
 
-  steps:
-    - name: Checout code
-      uses: actions/checkout@v4
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup Terraform
-      uses: hashicorp/steup-terraform@v3
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3 # Fixed typo: 'steup' to 'setup'
 
-    - name: Terraform init
-      run: terraform init
+      - name: Terraform init
+        run: terraform init
 
-    - name: Terraform Apply
-      run: terraform apply -auto-approve
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
